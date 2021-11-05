@@ -297,3 +297,5 @@ messagebox.showinfo(
 for u in range (i + 1, len(results) + 1):
     f.write(results[u-1][0] + ' ' + results[u-1][1] + '\n')
 f.close()
+
+"Комментарий создается ради возможности сделать новый коммит, чтобы исправить название лабораторной работы"
