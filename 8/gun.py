@@ -144,6 +144,8 @@ class Target:
         x = self.x = randint(600, 780)
         y = self.y = randint(300, 550)
         r = self.r = randint(2, 50)
+        self.vx = randint(-3, 3)
+        self.vy = randint(-3, 3)
         self.points = 0
         self.live = 1
         color = self.color = RED
@@ -152,16 +154,31 @@ class Target:
         """Попадание шарика в цель."""
         self.points += points
 
+    def move(self):
+        """Переместить цель 1-го типа по прошествии единицы времени.
+
+        Метод описывает перемещение цели 1-го за один кадр перерисовки. То есть, обновляет значения
+        self.x и self.y с учетом скоростей self.vx и self.vy и стен по краям окна (размер окна 800х600).
+        """
+        if self.x + self.vx > WIDTH or self.x + self.vx < 0:
+            self.vx = - self.vx
+        if self.y + self.vy > HEIGHT or self.y + self.vy < 0:
+            self.vy = - self.vy
+        self.x += self.vx
+        self.y -= self.vy
+
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 class Target_2:
     def new_target(self):
         """ Инициализация новой цели 2-го типа."""
-        x1 = self.x1 = randint(600, 780)
-        y1 = self.y1 = randint(300, 550)
+        x1 = self.x1 = randint(600, WIDTH - 45)
+        y1 = self.y1 = randint(300, HEIGHT - 45)
         x2 = self.x2 = randint(x1 + 30, WIDTH - 10)
         y2 = self.y2 = randint(y1 + 30, HEIGHT - 10)
+        self.vx = randint(-3, 3)
+        self.vy = randint(-3, 3)
         self.points = 0
         self.live = 1
         color = self.color = BLUE
@@ -169,6 +186,21 @@ class Target_2:
     def hit(self, points=1):
         """Попадание шарика в цель 2-го типа."""
         self.points += points
+        
+    def move(self):
+        """Переместить цель 2-го типа по прошествии единицы времени.
+
+        Метод описывает перемещение цели 2-го за один кадр перерисовки. То есть, обновляет значения
+        self.x и self.y с учетом скоростей self.vx и self.vy и стен по краям окна (размер окна 800х600).
+        """
+        if self.x2 + self.vx > WIDTH or self.x1 + self.vx < 0:
+            self.vx = - self.vx
+        if self.y2 + self.vy > HEIGHT or self.y1 + self.vy < 0:
+            self.vy = - self.vy
+        self.x1 += self.vx
+        self.x2 += self.vx
+        self.y1 -= self.vy
+        self.y2 -= self.vy
 
     def draw(self):
         pygame.draw.polygon(screen, self.color, ((self.x1, self.y1), (self.x1, self.y2), (self.x2, self.y2), (self.x2, self.y1), (self.x1, self.y1)))
@@ -207,6 +239,8 @@ while not finished:
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
 
+    target.move()
+    target_2.move()
     for b in balls:
         b.move()
         if b.hittest(target) and target.live:
